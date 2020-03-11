@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="card">
+    <div class="list-group list-group-flush">
+        <div class="list-group-item">
+            <span><b>edit customer</b></span>
+        </div>
+
+        <div class="list-group-item">
+            <form action="{% url 'bookings:onPostEdit' bookings.id %}" method="post" autocomplete="off">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="selectedcustomer">customer</label>
+                        <select class="form-control" name="selectedcustomer" required>
+                            <option value="" disabled selected>--SELECT--</option>
+                            {% for customer in customers %}
+                            <option value="{{ customer.id }}"{% if customer.id == bookings.customer_id %} selected{% endif %}>{{ customer.first_name }} {{ customer.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="selectedbookingtypes">booking_types</label>
+                        <select class="form-control" name="selectedbookingtypes" required>
+                            <option value="" disabled selected>--SELECT--</option>
+                            {% for key, value in booking_types %}
+                            <option value="{{ key }}"{% if key == bookings.booking_type %} selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="selectedroom">room</label>
+                        <select class="form-control" name="selectedroom" required>
+                            <option value="" disabled selected>--SELECT--</option>
+                            {% for room in rooms %}
+                            <option value="{{ room.id }}"{% if room.id == bookings.room_id %} selected{% endif %}>{{ room.room_number }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="arrival_datetime">arrival_datetime</label>
+                        <input type="datetime-local" id="arrival_datetime" name="arrival_datetime"
+                            class="form-control" value="{{ bookings.booking_time|date:'m/d/Y H:i A'}}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label for="comments">comments</label>
+                        <textarea class="form-control" rows="5" id="comments" name="comments">{{bookings.comment}}</textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-submit">submit</button>
+            </form>
+
+        </div>
+
+        <div class="list-group-item"><a href="{{request.META.HTTP_REFERER}}" class="btn btn-light">Go back</a></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    function lettersOnly() {
+        var charCode = event.keyCode;
+        if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 8)
+            return true;
+        else
+            return false;
+    }
+</script>
+{% endblock script %}

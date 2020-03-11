@@ -1,0 +1,168 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">available_rooms <span class="offset-4" data-feather="check-circle"></span></h5>
+                <table class="table table-sm table-hover" style="width:100%;">
+                    <thead>
+                        <tr class="text-dark">
+                            <th>
+                                <font color="#0C4B33"><small><b>#</b></small></font>
+                            </th>
+                            <th>
+                                <font color="#0C4B33"><small><b>room_number</b></small></font>
+                            </th>
+                            <th>
+                                <font color="#0C4B33"><small><b>room_type</b></small></font>
+                            </th>
+                            <th>
+                                <font color="#0C4B33"><small><b>book_room</b></small></font>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for room in available_rooms %}
+                        <tr>
+                            <td><small>{{ forloop.counter }}</small></td>
+                            <td><small>{{ room.room_number }}</small></td>
+                            <td><small>{{ room.get_room_type_display }}</small></td>
+                            <td><a href="{% url 'bookings:index' %}"><span class="offset-4 text-success"
+                                        data-feather="check-square"></span></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Pending Checkout</h5>
+                <table id="datatable" class="table table-sm table-hover" style="width:100%;">
+                    <thead>
+                        <tr class="text-dark">
+                            <th>
+                                <font color="#0C4B33"><small><b>#</b></small></font>
+                            </th>
+                            <th>
+                                <font color="#0C4B33"><small><b>customer_name</b></small></font>
+                            </th>
+                            <th>
+                                <font color="#0C4B33"><small><b>room_number</b></small></font>
+                            </th>
+                            <th>
+                                <font color="#0C4B33"><small><b>arrival_datetime</b></small></font>
+                            </th>
+                            <th>
+                                <font color="#0C4B33"><small><b>booking_at</b></small></font>
+                            </th>
+                            <th>
+                                <font color="#0C4B33"><small><b>checkout</b></small></font>
+                            </th>
+                            <th>
+                                <font color="#0C4B33"><small><b>action</b></small></font>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in all_bookings %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><small>{{ booking.customer.first_name|add:" "|add:booking.customer.last_name }}</small>
+                            </td>
+                            <td><small>{{ booking.room.room_number }}</small></td>
+                            <td><small>{{ booking.arrival }}</small></td>
+                            <td><small>{{ booking.booking_time }}</small></td>
+                            <td><small>{{ booking.checkout }}</small></td>
+                            <td>
+                                <a href="#" title="checkout" data-url="{% url 'bookings:OnGetCheckout' booking.id %}"
+                                    data-booking-id="{{booking.id}}"
+                                    data-customer="{{ booking.customer.first_name|add:" "|add:booking.customer.last_name }}"
+                                    title="cancel booking" data-toggle="modal"
+                                    data-target="#checkout-booking-modal"><span class="text-success"
+                                        data-feather="arrow-right"></span></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="formCheckoutBooking" action="{% url 'bookings:OnPostCheckout' %}" method="post" autocomplete="off">
+    {% csrf_token %}
+    <div class="modal fade" id="checkout-booking-modal" tabindex="-1" role="dialog"
+        aria-labelledby="gridSystemModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="border-radius:0rem;">
+                <div class="modal-header">
+                    <h5 class="modal-title text-muted"><strong>checkout booking</strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="hidden_booking_id" name="hidden_booking_id">
+                    <div class="form-group col-md-12">
+                        <label for="room_number">room_number</label>
+                        <input type="text" id="room_number" name="room_number" class="form-control" readonly
+                            style="background-color: white;">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="customer_name">customer_name</label>
+                        <input type="text" id="customer_name" name="customer_name" class="form-control" readonly
+                            style="background-color: white;">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="total_amount">total_amount</label>
+                        <input type="number" class="form-control" id="total_amount" name="total_amount" min="0"
+                            onKeyPress="if(this.value.length < 0) return false;" step=".01" readonly
+                            style="background-color: white;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'lib/datatable/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'lib/datatable/js/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+    $('#checkout-booking-modal').modal({ show: false, backdrop: 'static', keyboard: false })
+    $('#datatable').DataTable();
+    $("#checkout-booking-modal").on("shown.bs.modal", function (event) {
+        debugger
+        var booking_id = $(event.relatedTarget).data('booking-id');
+        var customer = $(event.relatedTarget).data('customer');
+        var url = $(event.relatedTarget).data('url');
+        var modal = $(this)
+        $.ajax({
+            url: url,
+            type: "GET",
+            cache: false,
+            dataType: "json",
+            success: function (response) {
+                modal.find('.modal-body').find('#hidden_booking_id').val(booking_id)
+                modal.find('.modal-body').find('#room_number').val(response.room_number)
+                modal.find('.modal-body').find('#customer_name').val(response.customer_name)
+                modal.find('.modal-body').find('#total_amount').val(response.total_amount)
+            }
+        });
+    });
+</script>
+{% endblock script %}

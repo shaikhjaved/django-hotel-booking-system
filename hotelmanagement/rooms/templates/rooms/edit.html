@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="card">
+    <div class="list-group list-group-flush">
+        <div class="list-group-item">
+            <span><b>edit room</b></span>
+        </div>
+
+        <div class="list-group-item">
+
+            <form action="{% url 'rooms:onPostEdit' rooms.id %}" method="post" autocomplete="off">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="room_number">room_number</label>
+                        <input type="number" id="room_number" name="room_number" min="0" class="form-control" value="{{rooms.room_number}}" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="selectedroomtypes">room_type</label>
+                        <select class="form-control" name="selectedroomtypes" required>
+                            <option value="" disabled selected>--SELECT--</option>
+                            {% for key, value in room_types %}
+                            <option value="{{ key }}"{% if key == rooms.room_type %} selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="number_of_beds">number_of_beds</label>
+                        <input type="number" class="form-control" id="number_of_beds" name="number_of_beds" min=1,
+                            onKeyPress="if(this.value.length === 4) return false;" value="{{rooms.number_of_beds}}" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="selectedroomstatus">room_status</label>
+                        <select class="form-control" name="selectedroomstatus" required>
+                            <option value="" disabled selected>--SELECT--</option>
+                            {% for key, value in room_status %}
+                            <option value="{{ key }}"{% if key == rooms.room_status %} selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="price_per_night">price_per_night</label>
+                        <input type="number" class="form-control" id="price_per_night" name="price_per_night" min="0"
+                            onKeyPress="if(this.value.length < 0) return false;" step=".00" value="{{rooms.price_per_night}}" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="max_person">max_person</label>
+                        <input type="number" min="0" class="form-control" id="max_person" name="max_person"
+                            onKeyPress="if(this.value.length < 0) return false;" value="{{rooms.max_person}}" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">submit</button>
+            </form>
+
+        </div>
+
+        <div class="list-group-item"><a href="{{request.META.HTTP_REFERER}}" class="btn btn-light">Go back</a></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock script %}

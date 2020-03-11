@@ -1,0 +1,32 @@
+<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+  <div class="sidebar-sticky">
+    <ul class="nav flex-column">
+
+      <li class="nav-item {% if home %}youarehere{% endif %}">
+        <a class="nav-link" href="{% url 'home:index' %}">
+          <span data-feather="list"></span> dashboard
+        </a>
+      </li>
+
+      <li class="nav-item {% if bookings_navlink %}youarehere{% endif %}">
+        <a class="nav-link" href="{% url 'bookings:index' %}">
+          <span data-feather="file-plus"></span> bookings
+        </a>
+      </li>
+
+      <li class="nav-item {% if customers_navlink %}youarehere{% endif %}">
+        <a class="nav-link" href="{% url 'customers:index' %}">
+          <span data-feather="user-plus"></span> customers
+        </a>
+      </li>
+
+      <li class="nav-item {% if rooms_navlink %}youarehere{% endif %}">
+        <a class="nav-link" href="{% url 'rooms:index' %}">
+          <span data-feather="home"></span> rooms
+        </a>
+      </li>
+
+    </ul>
+
+  </div>
+</nav>

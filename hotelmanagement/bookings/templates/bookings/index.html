@@ -1,0 +1,177 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static '/lib/datatable/css/dataTables.bootstrap4.min.css' %}">
+{% endblock styles %}
+
+{% block content %}
+
+<div class="">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active mr-auto" id="nav-home-tab" aria-selected="true"><b>bookings list</b></a>
+            <a href="#" data-toggle="modal" data-target="#create-bookings-modal">
+                <input type="button" value="create bookings" class="btn btn-light btn-sm" />
+            </a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="nav-home-tab">
+            <br />
+            <table id="datatable" class="table table-sm table-hover" style="width:100%;">
+                <thead>
+                    <tr class="text-dark">
+                        <th>
+                            <font color="#0C4B33"><small><b>#</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>customer_name</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>booking_types</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>room_number</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>arrival_datetime</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>booking_at</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>is_cancelled</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>action</b></small></font>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ booking.customer.first_name|add:" "|add:booking.customer.last_name }}</td>
+                        <td>{{ booking.get_booking_type_display }}</td>
+                        <td>{{ booking.room.room_number }}</td>
+                        <td>{{ booking.arrival }}</td>
+                        <td>{{ booking.booking_time }}</td>
+                        <td>{{ booking.is_cancelled }}</td>
+                        <td>
+                            <a href="{% url 'bookings:onGetEdit' booking.id %}">edit</a> |
+                            <a href="#" {% if booking.is_cancelled %}style="pointer-events: none;cursor: default;"{% endif %} data-hidden_booking_id="{{booking.id}}" title="cancel booking"
+                                data-toggle="modal" data-target="#cancel-booking-modal"><span class="text-danger"
+                                    data-feather="x-square"></span></a> |
+                            <a href="#">confirm</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<form id="formCreateBookings" action="{% url 'bookings:onPostCreate' %}" method="post" autocomplete="off">
+    {% csrf_token %}
+    <div class="modal fade" id="create-bookings-modal" tabindex="-1" role="dialog"
+        aria-labelledby="gridSystemModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="border-radius:0rem;">
+                <div class="modal-header">
+                    <h5 class="modal-title text-muted"><strong>create new bookings</strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="selectedcustomer">customer</label>
+                            <select class="form-control" name="selectedcustomer" required>
+                                <option value="" disabled selected>--SELECT--</option>
+                                {% for customer in customers %}
+                                <option value="{{ customer.id }}">{{ customer.first_name }} {{ customer.last_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="selectedbookingtypes">booking_types</label>
+                            <select class="form-control" name="selectedbookingtypes" required>
+                                <option value="" disabled selected>--SELECT--</option>
+                                {% for key, value in booking_types %}
+                                <option value="{{ key }}">{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="selectedroom">room</label>
+                            <select class="form-control" name="selectedroom" required>
+                                <option value="" disabled selected>--SELECT--</option>
+                                {% for room in rooms %}
+                                <option value="{{ room.id }}">{{ room.room_number }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="arrival_datetime">arrival_datetime</label>
+                            <input type="datetime-local" id="arrival_datetime" name="arrival_datetime"
+                                class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="comments">comments</label>
+                            <textarea class="form-control" rows="5" id="comments" name="comments"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form id="formCreateBookings" action="{% url 'bookings:onPostCancel' %}" method="post" autocomplete="off">
+    {% csrf_token %}
+    <div class="modal fade" id="cancel-booking-modal" tabindex="-1" role="dialog"
+        aria-labelledby="gridSystemModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="border-radius:0rem;">
+                <div class="modal-header">
+                    <h5 class="modal-title text-muted"><strong>cancel booking</strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="hidden_booking_id" name="hidden_booking_id">
+                    Are you sure you want to cancel this booking
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'lib/datatable/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'lib/datatable/js/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+    $('#create-bookings-modal').modal({ show: false, backdrop: 'static', keyboard: false })
+    $('#datatable').DataTable();
+    $("#cancel-booking-modal").on("shown.bs.modal", function (event) {
+        var hidden_booking_id = $(event.relatedTarget).data('hidden_booking_id');
+        $("#hidden_booking_id").val(hidden_booking_id)
+    });
+</script>
+{% endblock script %}

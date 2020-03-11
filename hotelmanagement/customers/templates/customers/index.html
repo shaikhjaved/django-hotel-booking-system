@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static '/lib/datatable/css/dataTables.bootstrap4.min.css' %}">
+{% endblock styles %}
+
+{% block content %}
+
+<div class="">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active mr-auto" id="nav-home-tab" aria-selected="true"><b>customer list</b></a>
+            <a href="{% url 'customers:onGetCreate' %}">
+                <input type="button" value="create customer" class="btn btn-light btn-sm" />
+            </a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="nav-home-tab">
+            <br />
+            <table id="datatable" class="table table-sm table-hover" style="width:100%;">
+                <thead>
+                    <tr class="text-dark">
+                        <th>
+                            <font color="#0C4B33"><small><b>#</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>first_name</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>last_name</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>email</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>phone</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>city</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>created_at</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>action</b></small></font>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ customer.first_name }}</td>
+                        <td>{{ customer.last_name }}</td>
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.phone }}</td>
+                        <td>{{ customer.city }}</td>
+                        <td>{{ customer.created_date }}</td>
+                        <td>
+                            <a href="{% url 'customers:onGetEdit' customer.id %}">edit</a> |
+                            <a href="{% url 'customers:onPostDelete' customer.id %}">delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'lib/datatable/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'lib/datatable/js/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+    $('#datatable').DataTable();
+</script>
+{% endblock script %}

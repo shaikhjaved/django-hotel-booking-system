@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ settings.APP_NAME }}</title>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/bootstrap/dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+    {% block styles %} {% endblock styles %}
+</head>
+<body class="text-monospace">
+<nav class="navbar navbar-light fixed-top bg-white flex-md-nowrap p-0 shadow-sm">
+  <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{% url 'home:index' %}"><span data-feather="layers"></span> <b>{{ settings.APP_NAME }}</b></a>
+  {% include "nav-top.html" %}
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    {% include "sidebar.html" %}
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 mt-3">
+      {% block content %} {% endblock %}
+    </main>
+  </div>
+</div>
+<script src="{% static 'lib/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'lib/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/feather.min.js' %}"></script>
+<script src="{% static 'js/dashboard.js'%}"></script>
+<script src="{% static 'js/validate.js'%}"></script>
+<script>
+  setTimeout(function () {
+     $('.message-span').html(null);
+  }, 3000);
+</script>
+{% block script %} {% endblock script %}
+</body>
+</html>

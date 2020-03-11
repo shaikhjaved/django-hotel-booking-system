@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static '/lib/datatable/css/dataTables.bootstrap4.min.css' %}">
+{% endblock styles %}
+
+{% block content %}
+
+<div class="">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active mr-auto" id="nav-home-tab" aria-selected="true"><b>room list</b></a>
+            <a href="{% url 'rooms:onGetCreate' %}">
+                <input type="button" value="create room" class="btn btn-light btn-sm" />
+            </a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="nav-home-tab">
+            <br />
+            <table id="datatable" class="table table-sm table-hover" style="width:100%;">
+                <thead>
+                    <tr class="text-dark">
+                        <th>
+                            <font color="#0C4B33"><small><b>#</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>room_number</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>room_type</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>number_of_beds</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>room_status</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>price_per_night</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>max_person</b></small></font>
+                        </th>
+                        <th>
+                            <font color="#0C4B33"><small><b>action</b></small></font>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for room in rooms %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ room.room_number }}</td>
+                        <td>{{ room.get_room_type_display }}</td>
+                        <td>{{ room.number_of_beds }}</td>
+                        <td>{{ room.get_room_status_display }}</td>
+                        <td>{{ room.price_per_night }}</td>
+                        <td>{{ room.max_person }}</td>
+                        <td>
+                            <a href="{% url 'rooms:onGetEdit' room.id %}">edit</a> |
+                            <a href="{% url 'rooms:onPostDelete' room.id %}">delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'lib/datatable/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'lib/datatable/js/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+    $('#datatable').DataTable();
+</script>
+{% endblock script %}
